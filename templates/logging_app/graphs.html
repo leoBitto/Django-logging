@@ -1,0 +1,97 @@
+<!-- logging_app/templates/logging_app/graphs.html -->
+
+{% extends "website/dashboard/dashboard.html" %}
+{% load static %}
+
+{% block dashboard_app %}
+<!-- Aggiungi il tuo codice HTML personalizzato qui -->
+<div class="container-fluid">
+    <div class="row">
+        <!-- Colonna per i grafici -->
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-line mr-1"></i> Error Trend Over Time
+                </div>
+                <div class="card-body">
+                    <!-- Inserisci qui l'HTML per il grafico a linee degli errori -->
+                    {{ errors_line_chart_html | safe }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-line mr-1"></i> Access Trend Over Time
+                </div>
+                <div class="card-body">
+                    <!-- Inserisci qui l'HTML per il grafico a linee degli accessi -->
+                    {{ access_line_chart_html | safe }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar mr-1"></i> Error Trend By Hour
+                </div>
+                <div class="card-body">
+                    <!-- Inserisci qui l'HTML per il grafico a barre degli errori per ora del giorno -->
+                    {{ errors_by_hour_chart | safe }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar mr-1"></i> Access Trend By Hour
+                </div>
+                <div class="card-body">
+                    <!-- Inserisci qui l'HTML per il grafico a barre degli accessi per ora del giorno -->
+                    {{ access_by_hour_chart | safe }}
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar mr-1"></i> Error Trend By Weekday
+                </div>
+                <div class="card-body">
+                    <!-- Inserisci qui l'HTML per il grafico a barre degli errori per giorno della settimana -->
+                    {{ errors_by_weekday_chart | safe }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar mr-1"></i> Access Trend By Weekday
+                </div>
+                <div class="card-body">
+                    <!-- Inserisci qui l'HTML per il grafico a barre degli accessi per giorno della settimana -->
+                    {{ access_by_weekday_chart | safe }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie mr-1"></i> Response Code Distribution
+                </div>
+                <div class="card-body">
+                    <!-- Inserisci qui l'HTML per il grafico a torta dei codici di risposta -->
+                    {{ response_code_chart_html | safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

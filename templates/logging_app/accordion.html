@@ -1,0 +1,21 @@
+<!-- logging_app/templates/logging_app/accordion.html -->
+
+<li class="nav-item">
+    <a class="nav-link active" data-bs-toggle="collapse" href="#loggingAccordion" role="button" aria-expanded="true" aria-controls="loggingAccordion">
+        Logging
+    </a>
+    <div class="collapse" id="loggingAccordion">
+        <ul class="nav flex-column ms-3">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logging:graphs' %}" >Graphs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logging:AElist' %}" >Access & Error list</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logging:IPlist' %}" >IPs</a>
+            </li>
+            <!-- Aggiungi altri link per le pagine di logging se necessario -->
+        </ul>
+    </div>
+</li>
