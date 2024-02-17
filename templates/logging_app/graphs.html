@@ -12,6 +12,29 @@
         <div class="col-md-6">
             <div class="card mb-4">
                 <div class="card-header">
+                    <i class="fas fa-chart-line mr-1"></i>Cumulative Error Trend
+                </div>
+                <div class="card-body">
+                    <!-- Inserisci qui l'HTML per il grafico a linee degli errori -->
+                    {{ errors_cum_chart_html | safe }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-line mr-1"></i>Cumulative Access Trend
+                </div>
+                <div class="card-body">
+                    <!-- Inserisci qui l'HTML per il grafico a linee degli accessi -->
+                    {{ access_cum_chart_html | safe }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
                     <i class="fas fa-chart-line mr-1"></i> Error Trend Over Time
                 </div>
                 <div class="card-body">
@@ -31,6 +54,7 @@
                 </div>
             </div>
         </div>
+        
         
         <div class="col-md-6">
             <div class="card mb-4">

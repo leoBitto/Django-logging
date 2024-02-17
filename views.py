@@ -44,8 +44,11 @@ class GraphsView(View):
         access_by_date = AccessLog.objects.values('timestamp').annotate(count=Count('id'))
 
         # Creazione dell'HTML per gli errori
-        error_line_chart_html = self.create_line_chart(errors_by_date)
-        access_line_chart_html = self.create_line_chart(access_by_date)
+        error_cum_chart_html = self.create_line_chart(errors_by_date, cumulative=True)
+        access_cum_chart_html = self.create_line_chart(access_by_date, cumulative=True)
+
+        error_line_chart_html = self.create_line_chart(errors_by_date, cumulative=False)
+        access_line_chart_html = self.create_line_chart(access_by_date, cumulative=False)
 
         # Recupera i dati per la distribuzione dei codici di stato delle risposte
         response_codes = AccessLog.objects.values('response_code').annotate(count=Count('id'))
@@ -61,6 +64,8 @@ class GraphsView(View):
         return render(request, 'logging_app/graphs.html', {
             'errors_line_chart_html': error_line_chart_html,
             'access_line_chart_html': access_line_chart_html,
+            'errors_cum_chart_html': error_cum_chart_html,
+            'access_cum_chart_html': access_cum_chart_html,
             'response_code_chart_html': response_code_chart_html,
             'access_by_hour_chart' : access_by_hour_chart,
             'errors_by_hour_chart' : errors_by_hour_chart,
@@ -83,17 +88,38 @@ class GraphsView(View):
         fig.update_layout(title='Response Code Distribution')
         return fig.to_html(full_html=False)
 
-    def create_line_chart(self, data):
-        cumulative_data = []
-        cumulative_count = 0
-        for entry in data:
-            cumulative_count += entry['count']
-            cumulative_data.append({'timestamp': entry['timestamp'], 'count': cumulative_count})
+    def create_line_chart(self, data, cumulative=False):
+        """
+        Crea un grafico a linee che mostra il conteggio degli eventi nel tempo.
 
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=[entry['timestamp'] for entry in cumulative_data], y=[entry['count'] for entry in cumulative_data], mode='lines', name='Cumulative Count'))
-        fig.update_layout(title='Cumulative Trend Over Time', xaxis_title='Date', yaxis_title='Cumulative Count')
+        Args:
+            data (list): Una lista di dizionari contenente i dati da visualizzare nel grafico.
+            cumulative (bool, optional): Se True, il grafico mostrerà il conteggio cumulativo nel tempo. Se False, mostrerà il conteggio non cumulativo. Default è False.
+
+        Returns:
+            str: HTML del grafico a linee.
+        """
+        if cumulative:
+            # Calcola il conteggio cumulativo nel tempo
+            cumulative_data = []
+            cumulative_count = 0
+            for entry in data:
+                cumulative_count += entry['count']
+                cumulative_data.append({'timestamp': entry['timestamp'], 'count': cumulative_count})
+
+            # Crea il grafico a linee con il conteggio cumulativo
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=[entry['timestamp'] for entry in cumulative_data], y=[entry['count'] for entry in cumulative_data], mode='lines', name='Cumulative Count'))
+            fig.update_layout(title='Cumulative Trend Over Time', xaxis_title='Date', yaxis_title='Cumulative Count')
+        else:
+            # Crea il grafico a linee con il conteggio non cumulativo
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=[entry['timestamp'] for entry in data], y=[entry['count'] for entry in data], mode='lines', name='Count'))
+            fig.update_layout(title='Trend Over Time', xaxis_title='Date', yaxis_title='Count')
+
+        # Restituisce l'HTML del grafico
         return fig.to_html(full_html=False)
+
     
     def create_histogram_chart(self, data, interval='day'):
         """
