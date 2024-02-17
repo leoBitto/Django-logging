@@ -6,6 +6,7 @@ from .models import AccessLog, ErrorLog
 from django.db.models import Count
 import pandas as pd
 from .forms import ConsentForm
+from django.utils import timezone
 
 class ConsentView(View):
     template_name = 'logging_app/consent.html'
@@ -18,6 +19,15 @@ class ConsentView(View):
         form = ConsentForm(request.POST)  # Crea un'istanza del form con i dati inviati dal POST
         if form.is_valid():  # Controlla se il form è valido
             if form.cleaned_data['consent_given']:  # Verifica se il consenso è stato dato
+                ip_address = request.META.get('REMOTE_ADDR', '')
+                access_log = AccessLog(
+                    ip_address=ip_address,
+                    timestamp=timezone.now(),
+                    request_path=request.path,
+                    request_method=request.method,
+                    response_code=200  # Codice di risposta di successo
+                )
+                access_log.save()
                 return redirect('website:home')  # Reindirizza alla homepage se il consenso è stato dato
             else:
                 return redirect('http://www.google.com')  # Reindirizza a Google se il consenso non è stato dato

@@ -3,7 +3,7 @@ from .views import *
 # include the following line inside the urls of base
 # path('dashboard/logging/', include('logging.urls', namespace='logging')),
 
-app_name = 'logging_app'
+app_name = 'logging'
 
 urlpatterns = [
     path('graphs/', GraphsView.as_view(), name='graphs'),

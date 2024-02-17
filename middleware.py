@@ -1,11 +1,12 @@
 import traceback
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils import timezone
 from django.conf import settings  # Aggiungi questa riga per accedere alle impostazioni
 from .models import AccessLog, ErrorLog
 
 class LogMiddleware:
-    LOGGING_PATH_PREFIX = ('/logging/', '/static/')
+    LOGGING_PATH_PREFIX = ('/dashboard/logging/', '/static/')
     LOGGING_PATH_POSTFIX = ('js', 'json', 'css')
 
     def __init__(self, get_response):
@@ -27,6 +28,7 @@ class LogMiddleware:
             
             # Check if the IP address exists in the database
             if AccessLog.objects.filter(ip_address=ip_address).exists():
+
                 # If the IP address exists, continue logging access as usual
                 access_log = AccessLog(
                     ip_address=ip_address,
@@ -37,8 +39,9 @@ class LogMiddleware:
                 )
                 access_log.save()
             else:
+                print("not in the db")
                 # If the IP address does not exist, redirect to consent view
-                return redirect('consent_view')
+                return redirect('logging:consent_view')
         
         return response
 
