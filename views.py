@@ -5,6 +5,7 @@ from django.db.models import Count
 from .models import AccessLog, ErrorLog
 from django.db.models import Count
 import pandas as pd
+import numpy as np
 from .forms import ConsentForm
 from django.utils import timezone
 
@@ -44,11 +45,11 @@ class GraphsView(View):
         access_by_date = AccessLog.objects.values('timestamp').annotate(count=Count('id'))
 
         # Creazione dell'HTML per gli errori
-        _, error_cum_chart_html = self.create_line_chart(errors_by_date, cumulative=True)
-        data, access_cum_chart_html = self.create_line_chart(access_by_date, cumulative=True)
+        error_cum_chart_html = self.create_line_chart(errors_by_date, cumulative=True)
+        access_cum_chart_html = self.create_line_chart(access_by_date, cumulative=True)
 
-        _, error_line_chart_html = self.create_line_chart(errors_by_date, cumulative=False)
-        _, access_line_chart_html = self.create_line_chart(access_by_date, cumulative=False)
+        error_line_chart_html = self.create_line_chart(errors_by_date, cumulative=False)
+        access_line_chart_html = self.create_line_chart(access_by_date, cumulative=False)
 
         # Recupera i dati per la distribuzione dei codici di stato delle risposte
         response_codes = AccessLog.objects.values('response_code').annotate(count=Count('id'))
@@ -66,7 +67,6 @@ class GraphsView(View):
             'access_line_chart_html': access_line_chart_html,
             'errors_cum_chart_html': error_cum_chart_html,
             'access_cum_chart_html': access_cum_chart_html,
-            'data': data,
             'response_code_chart_html': response_code_chart_html,
             'access_by_hour_chart' : access_by_hour_chart,
             'errors_by_hour_chart' : errors_by_hour_chart,
@@ -102,17 +102,16 @@ class GraphsView(View):
         """
         if cumulative:
             # Calcola il conteggio cumulativo nel tempo
-            cumulative_data = []
-            cumulative_count = 0
-            for entry in data:
-                cumulative_count += entry['count']
-                cumulative_data.append({'timestamp': entry['timestamp'], 'count': cumulative_count})
+
+            data = list(data)
+            data.sort(key=lambda x: x['timestamp'])
+
+            # Calcola il conteggio cumulativo
+            cumulative_data = np.cumsum([entry['count'] for entry in data])
             
-            data = cumulative_data
-      
             # Crea il grafico a linee con il conteggio cumulativo
             fig = go.Figure()
-            fig.add_trace(go.Scatter(x=[entry['timestamp'] for entry in cumulative_data], y=[entry['count'] for entry in cumulative_data], mode='lines', name='Cumulative Count'))
+            fig.add_trace(go.Scatter(x=[entry['timestamp'] for entry in data], y=cumulative_data, mode='lines', name='Cumulative Count'))
             fig.update_layout(title='Cumulative Trend Over Time', xaxis_title='Date', yaxis_title='Cumulative Count')
         else:
             # Crea il grafico a linee con il conteggio non cumulativo
@@ -121,7 +120,7 @@ class GraphsView(View):
             fig.update_layout(title='Trend Over Time', xaxis_title='Date', yaxis_title='Count')
 
         # Restituisce l'HTML del grafico
-        return data, fig.to_html(full_html=False)
+        return fig.to_html(full_html=False)
 
     
     def create_histogram_chart(self, data, interval='day'):
