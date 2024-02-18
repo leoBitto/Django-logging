@@ -29,6 +29,9 @@
                     <!-- Inserisci qui l'HTML per il grafico a linee degli accessi -->
                     {{ access_cum_chart_html | safe }}
                 </div>
+                {% for d in data %}
+                    <p>{{ d.timestamp }}:{{ d.count }}</p>
+                {% endfor %}
             </div>
         </div>
 

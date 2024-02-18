@@ -6,7 +6,7 @@ from django.conf import settings  # Aggiungi questa riga per accedere alle impos
 from .models import AccessLog, ErrorLog
 
 class LogMiddleware:
-    LOGGING_PATH_PREFIX = ('/dashboard/logging/', '/static/')
+    LOGGING_PATH_PREFIX = ('/dashboard/logging/', '/static/', '/admin/')
     LOGGING_PATH_POSTFIX = ('js', 'json', 'css')
 
     def __init__(self, get_response):
@@ -39,7 +39,6 @@ class LogMiddleware:
                 )
                 access_log.save()
             else:
-                print("not in the db")
                 # If the IP address does not exist, redirect to consent view
                 return redirect('logging:consent_view')
         
