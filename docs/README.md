@@ -51,7 +51,7 @@ To incorporate the **logging_app** into your Django project and leverage its mon
 3. **URL Configuration**:
    - Include the `logging_app` URLs in your project's main URL patterns. Add the following line inside the URL patterns of your project's URLs file:
      ```python
-     path('dashboard/logging/', include('logging.urls', namespace='logging')),
+     path('dashboard/logging/', include('logging_app.urls', namespace='logging')),
      ```
    - This line includes the URLs of the `logging` app under the namespace `'logging'` within the path `'dashboard/logging/'`.
 
