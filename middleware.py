@@ -6,7 +6,7 @@ from django.conf import settings  # Aggiungi questa riga per accedere alle impos
 from .models import AccessLog, ErrorLog
 
 class LogMiddleware:
-    LOGGING_PATH_PREFIX = ('/dashboard/logging/', '/static/', '/admin/')
+    LOGGING_PATH_PREFIX = ('/dashboard/logging/', '/static/', '/admin/', 'dashboard')
     LOGGING_PATH_POSTFIX = ('js', 'json', 'css')
 
     def __init__(self, get_response):
@@ -24,7 +24,7 @@ class LogMiddleware:
         response = self.get_response(request)
         
         if not (request.path.startswith(self.LOGGING_PATH_PREFIX) or request.path.endswith(self.LOGGING_PATH_POSTFIX)):
-            ip_address = request.META.get('REMOTE_ADDR', '')
+            ip_address = request.META.get('HTTP_X_REAL_IP', '')
             
             # Check if the IP address exists in the database
             if AccessLog.objects.filter(ip_address=ip_address).exists():
@@ -51,7 +51,7 @@ class LogMiddleware:
         """
         # Cattura l'eccezione e registra l'errore solo se DEBUG è False
         error_log = ErrorLog(
-            ip_address=request.META.get('REMOTE_ADDR', ''),  # Ottiene l'indirizzo IP del client
+            ip_address=request.META.get('HTTP_X_REAL_IP', ''),  # Ottiene l'indirizzo IP del client
             timestamp=timezone.now(),  # Imposta il timestamp attuale
             request_path=request.path,  # Ottiene il percorso della richiesta
             request_method=request.method,  # Ottiene il metodo della richiesta (GET, POST, etc.)
