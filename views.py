@@ -20,7 +20,7 @@ class ConsentView(View):
         form = ConsentForm(request.POST)  # Crea un'istanza del form con i dati inviati dal POST
         if form.is_valid():  # Controlla se il form è valido
             if form.cleaned_data['consent_given']:  # Verifica se il consenso è stato dato
-                ip_address = request.META.get('REMOTE_ADDR', '')
+                ip_address = request.META.get('HTTP_X_REAL_IP', '')
                 access_log = AccessLog(
                     ip_address=ip_address,
                     timestamp=timezone.now(),
